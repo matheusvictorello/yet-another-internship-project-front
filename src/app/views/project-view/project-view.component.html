@@ -1,0 +1,22 @@
+<div
+	*ngIf="project"
+	class="task-list"
+	cdkDropList
+	cdkDropListOrientation="horizontal"
+	[cdkDropListData]="project.tasks"
+	(cdkDropListDropped)="dropTask($event)"
+>
+	<app-task-view
+		*ngFor="let task of project.tasks"
+		class="task"
+		[task]="task"
+		[allTasksIds]="allTasksIds"
+		cdkDrag
+		(onDelete)="deleteTask($event)"
+	></app-task-view>
+
+	<div
+		class="new-task-btn"
+		(mousedown)="newTask()"
+	>+</div>
+</div>

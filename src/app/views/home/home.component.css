@@ -1,0 +1,68 @@
+.project-bar {
+	background-color: #270F48;
+
+	padding-left: 10px;
+
+	display:        flex;
+	flex-direction: row;
+	
+	overflow: hidden;
+}
+
+.project-tab {
+	background-color: #bbb;
+
+	width:  150px;
+	height:  36px;
+	padding:  8px;
+
+	display:        flex;
+	flex-direction: row;	
+
+	border-radius: 8px 8px 0px 0px;
+
+	box-sizing: border-box;
+	box-shadow: rgba(0, 0, 0, 0.17) 0px -23px 25px 0px inset, rgba(0, 0, 0, 0.15) 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, rgba(0, 0, 0, 0.06) 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
+}
+
+.project-name ::ng-deep input {
+	width: 120px;
+	font-size: 14px;
+	color:     black;
+}
+
+.new-project-btn {
+	color:     white;
+	margin:    5px 10px;
+	font-size: 20px;
+	cursor:    pointer;
+}
+
+.selected {
+	background-color: white;
+	box-shadow:       none;
+}
+
+.delete-btn {
+	color:       transparent;
+	margin-left: auto;
+	font-size:   20px;
+	cursor:      pointer;
+}
+
+.delete-btn:hover {
+	color:  #a00;
+}
+
+
+.cdk-drag-placeholder {
+	opacity: 0;
+}
+
+.cdk-drag-animating {
+	transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.project-bar.cdk-drop-list-dragging .project-tab:not(.cdk-drag-placeholder) {
+	transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
