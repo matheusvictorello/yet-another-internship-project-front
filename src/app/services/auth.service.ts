@@ -1,81 +1,75 @@
 import { Injectable } from '@angular/core';
+import { Subject, BehaviorSubject } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject } from 'rxjs';
 
 import { environment } from '../../environments/environment';
 
-import { User } from '../domain';
+import { AuthorizationRequest } from './AuthorizationRequest';
+import { AuthorizationResponse } from './AuthorizationResponse';
+import { User } from '../domain/User';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private _loggedIn$ = new BehaviorSubject<boolean>(true);
-  private _username$ = new BehaviorSubject<string>('matheus');
-  private _user$ = new BehaviorSubject<User | undefined>({
-    id: 1,
-    name: "matheus",
-    projectIdList:[1,2],
-    projects: [],
-  });
+  private BASE_URL   = environment.BASE_URL + "/auth";
+  private _jwt$      = new BehaviorSubject<string>("");
+  private _user$     = new BehaviorSubject<User>({ username : "" });
+  private _loggedin$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private http : HttpClient,
   ) { }
+  
+  authenticate(request : AuthorizationRequest) {
+    const status = new Subject<{ username : string, jwt : string }>();
 
-  get loggedIn() {
-    return this._loggedIn$.getValue();
+    this.http.post<AuthorizationResponse>(this.BASE_URL, request).subscribe((response) => {
+      this._jwt$.next(response.jwt);
+      this._user$.next({ username: request.username });
+      this._loggedin$.next(true);
+      
+      status.next({ username : request.username, jwt : response.jwt});
+      status.complete();
+
+      //
+      
+      console.log(response.jwt);
+    }, (err) => {
+      this.desauthenticate();
+
+      status.error("invalid username or password");
+
+      console.error(err);
+    });
+
+    return status;
   }
 
-  get loggedIn$() {
-    return this._loggedIn$.asObservable();
-  }
-
-  get username() {
-    return this._username$.getValue();
-  }
-
-  get username$() {
-    return this._username$.asObservable();
-  }
-
-  get user() {
-    return this._user$.getValue();
+  desauthenticate() {
+    this._jwt$.next("");
+    this._user$.next({ username: "" });
+    this._loggedin$.next(false);
   }
 
   get user$() {
     return this._user$.asObservable();
   }
 
-  login(username : string, password : string) {
-    if (username === '') {
-      this._loggedIn$.next(false);
-      this._username$.next(username);
-      this._user$.next(undefined);
-      return;
-    }
-
-    const url = environment.base_url + '/auth' + '/' + username;
-
-    this.http.get(url)
-      .subscribe((u) => {
-        const user = u as User;
-
-        this._loggedIn$.next(true);
-        this._username$.next(user.name);
-        this._user$.next(user);
-      }, (err) => {
-        this._loggedIn$.next(false);
-        this._username$.next(username);
-        this._user$.next(undefined);
-      }
-    );
+  get loggedin$() {
+    return this._loggedin$.asObservable();
   }
 
-  logout() {
-    this._loggedIn$.next(false);
-    this._username$.next('');
-    this._user$.next(undefined);
+  get jwt() {
+    return this._jwt$.getValue();
+  }
+
+  get user() {
+    return this._user$.getValue();
+  }
+
+  get loggedin() {
+    return this._loggedin$.getValue();
   }
 }

@@ -1,6 +1,6 @@
-<header>
-	<app-editable-text
-		[value]="username"
-		(editEnd)="onChange($event)"
-	></app-editable-text>
-</header>
+<div>
+	<div class="username">{{username$ | async}}</div>
+	<button *ngIf="!(loggedin$ | async) && (url != '/signin')" routerLink="signin">Sign In</button>
+	<button *ngIf="!(loggedin$ | async) && (url != '/signup')" routerLink="signup">Sign Up</button>
+	<button *ngIf=" (loggedin$ | async)" (click)="signOut()" >Sign Out</button>
+</div>
